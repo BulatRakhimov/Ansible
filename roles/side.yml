@@ -1,0 +1,16 @@
+---
+- name: Tasks for B
+  hosts: host_B
+  gather_facts: yes
+  become: true
+  roles:
+    - task1
+    - task2
+    - task3+4
+
+- name: Tasks for C
+  hosts: host_C
+  gather_facts: yes
+  become: true
+  roles:
+    - task5

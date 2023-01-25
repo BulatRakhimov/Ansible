@@ -1,0 +1,10 @@
+---
+# tasks file for task5
+- name: PostgreSQL ping 
+  postgresql_ping:
+    db: "{{ db_name_1 }}"
+    login_host: host_B
+    login_user: "{{ db_user }}"
+    login_password: "{{ db_user_password }}"
+    ca_cert: /root/root.crt
+    ssl_mode: prefer

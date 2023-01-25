@@ -1,0 +1,5 @@
+---
+# vars file for task5
+db_name_1: myapp
+db_user: developer
+db_user_password: HireMePlease123

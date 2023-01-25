@@ -1,0 +1,85 @@
+---
+# tasks file for task3
+- name: Install PostgreSQL
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+      - libpq-dev
+      - python3-psycopg2
+    state: present
+
+- name: Check if postgres is initialized
+  ansible.builin.stat:
+    path: "{{ postgresql_data_dir }}/pg_hba.conf"
+  register: postgres_data
+
+- name: initialize postgresql
+  ansible.builtin.shell: "{{ postgresql_bin_path }}/initdb -D {{ postgresql_data_dir }}"
+  become: true
+  become_user: postgres
+  when: not posgres_data.stat.exists
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Utility present
+  ansible.builtin.package:
+    name: python3-psycopg2
+    state: present
+
+- name: Create myapp database
+  community.postgresql.postgresql_db:
+    state: present
+    name: "{{ db_name_1 }}"
+  become: true
+
+- name: Create myauth database
+  community.postgresql.postgresql_db:
+    state: present
+    name: "{{ db_name_2 }}"
+  become: true
+
+- name: Create new user developer
+  community.postgresql.postgresql_user:
+    state: present
+    name: "{{ db_user }}"
+    password: "{{ db_user_password }}"
+  become: true
+  become_user: postgres
+
+- name: Allow developer to connect from C
+  community.postgresql.postgresql_pg_hba:
+    dest: "~/data/pg_hba.conf"
+    conftype: host
+    databases: all
+    adress: host_C
+    method: md5
+    users: "{{ db_user }}"
+    create: true
+  become: true
+  become_user: postgres
+  notify: Restart service
+
+- name: Grant db user developer myapp db
+  community.postgresql.postgresql_privs:
+    type: database
+    database: "{{ db_name_1 }}"
+    roles: "{{ db_user }}"
+    privs: SELECT,UPDATE
+    grant_option: false
+  become: true
+  become_user: postgres
+
+- name: Grant db user developer myauth db
+  community.postgresql.postgresql_privs:
+    type: database
+    database: "{{ db_name_2 }}"
+    roles: "{{ db_user }}"
+    privs: SELECT
+    grant_option: false
+  become: true
+  become_user: postgres

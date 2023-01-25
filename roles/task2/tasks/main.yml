@@ -1,0 +1,7 @@
+---
+# tasks file for task2
+- name: Add DevOps to Host B
+    user: name=DevOps groups=sudo shell=/bin/bash password=<passwd>
+
+- name: Add SSH keys to remote host
+    authorized_key: user=DevOps key="{{ lookup('file', "/home/DevOps/Downloads/key.pub") }}"

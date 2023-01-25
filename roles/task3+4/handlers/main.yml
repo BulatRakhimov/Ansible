@@ -1,0 +1,6 @@
+---
+# handlers file for task3
+- name: Restart service
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
