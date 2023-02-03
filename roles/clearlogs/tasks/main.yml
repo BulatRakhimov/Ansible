@@ -1,0 +1,11 @@
+---
+- name: Copy and run file on server
+  copy:
+    src: sdasd.sh
+    dest: /tmp/sdasd.sh
+    mode: 0755
+  become: yes
+
+- name: Run remote script
+  shell: /tmp/sdasd.sh
+  become: yes
